@@ -33,6 +33,7 @@ import com.freeturn.app.domain.proxy.ProxyStore
 import com.freeturn.app.domain.proxy.SocketProtector
 import com.freeturn.app.domain.proxy.Socks5Server
 import com.freeturn.app.domain.proxy.TunHandle
+import com.freeturn.app.ui.screens.captcha.AutomaticCaptchaWebViewHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -330,6 +331,7 @@ class ProxyService : VpnService() {
         srv = opts,
         carrierDns = if (cfg.useCarrierDns) network.physicalDnsServers() else null,
         ownClientId = prefs.ownClientId(),
+        advancedCaptchaEnabled = prefs.advancedCaptchaFlow.first(),
     )
 
     private fun onNetworkHandover() {
@@ -366,9 +368,19 @@ class ProxyService : VpnService() {
         }
     }
 
+    /** Окно автоматической капчи открыто: сбрасывать его нужно только на переходе, не на каждый статус. */
+    private var autoCaptchaActive = false
+
     /** Нотификация ведётся тем же состоянием, что видит UI. */
     private suspend fun observeStatus() {
         store.status.collect { status ->
+            if (status.captchaUrl.isNotBlank() && !status.captchaManual) {
+                AutomaticCaptchaWebViewHostController.show(this@ProxyService, status.captchaUrl, status.captchaId)
+                autoCaptchaActive = true
+            } else if (autoCaptchaActive) {
+                autoCaptchaActive = false
+                AutomaticCaptchaWebViewHostController.clear()
+            }
             // После решения об остановке молчим: нотификация уже снята.
             if (stopping.get()) return@collect
             notifier.update(status, tunnelMode, provider)
@@ -471,6 +483,7 @@ class ProxyService : VpnService() {
     private fun teardown(reason: String) {
         val session = this.session
         notifier.cancelCaptcha()
+        AutomaticCaptchaWebViewHostController.clear()
         // Причина обязательна: по логу после гибернации надо отличать команду пользователя
         // от ошибки ядра и от отзыва VPN системой.
         log.add("Сессия $session: остановка ($reason)")
