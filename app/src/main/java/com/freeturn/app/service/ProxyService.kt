@@ -368,12 +368,17 @@ class ProxyService : VpnService() {
         }
     }
 
+    /** Окно автоматической капчи открыто: сбрасывать его нужно только на переходе, не на каждый статус. */
+    private var autoCaptchaActive = false
+
     /** Нотификация ведётся тем же состоянием, что видит UI. */
     private suspend fun observeStatus() {
         store.status.collect { status ->
             if (status.captchaUrl.isNotBlank() && !status.captchaManual) {
                 AutomaticCaptchaWebViewHostController.show(this@ProxyService, status.captchaUrl, status.captchaId)
-            } else {
+                autoCaptchaActive = true
+            } else if (autoCaptchaActive) {
+                autoCaptchaActive = false
                 AutomaticCaptchaWebViewHostController.clear()
             }
             // После решения об остановке молчим: нотификация уже снята.
@@ -478,6 +483,7 @@ class ProxyService : VpnService() {
     private fun teardown(reason: String) {
         val session = this.session
         notifier.cancelCaptcha()
+        AutomaticCaptchaWebViewHostController.clear()
         // Причина обязательна: по логу после гибернации надо отличать команду пользователя
         // от ошибки ядра и от отзыва VPN системой.
         log.add("Сессия $session: остановка ($reason)")

@@ -212,6 +212,7 @@ private fun createCaptchaWebView(context: android.content.Context) = WebView(con
     settings.javaScriptEnabled = true
     settings.domStorageEnabled = true
     settings.allowContentAccess = false
+    settings.allowFileAccess = false
     settings.userAgentString = settings.userAgentString.replace("; wv)", ")")
     webViewClient = object : WebViewClient() {
         override fun shouldOverrideUrlLoading(
