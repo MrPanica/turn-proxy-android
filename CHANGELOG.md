@@ -1,5 +1,22 @@
 # Changelog
 
+## [5.3.0](https://github.com/hackdiaz-dev/turn-proxy-android/compare/v5.2.1...v5.3.0) (2026-10-21)
+
+
+### Features
+
+* **captcha:** advanced captcha solving ([c4f0578](https://github.com/hackdiaz-dev/turn-proxy-android/commit/c4f05787f5f45e2edf76518b54ef176397b89700))
+* **captcha:** решать автоматическую капчу в фоне ([23b4ec5](https://github.com/hackdiaz-dev/turn-proxy-android/commit/23b4ec5d6ac5d3878991d82222d11a062e503652))
+
+
+### Fixes
+
+* **captcha:** clear WebView cookies after challenge ([56840e4](https://github.com/hackdiaz-dev/turn-proxy-android/commit/56840e43b203ade414f14f90b20b0268086f916b))
+* **captcha:** create automatic WebView in VPN service ([de9f1c9](https://github.com/hackdiaz-dev/turn-proxy-android/commit/de9f1c919fba8d4b9d34137fb4ac8781c482ea25))
+* **captcha:** enforce manual and advanced modes ([8289aa9](https://github.com/hackdiaz-dev/turn-proxy-android/commit/8289aa9c9a01b28f38c04f3ac70ca9ebff904ca5))
+* **captcha:** reset automatic WebView only on transition and on service teardown, disable file access ([65c60ac](https://github.com/hackdiaz-dev/turn-proxy-android/commit/65c60ace2b6c38f7ca7feb7edeeb2efa5331545e))
+* **captcha:** запускать WebView только на время проверки ([ab00063](https://github.com/hackdiaz-dev/turn-proxy-android/commit/ab00063659036d47749f5f8394e0df745eed20f0))
+
 ## [5.2.1](https://github.com/hackdiaz-dev/turn-proxy-android/compare/v5.2.0...v5.2.1) (2026-10-17)
 
 
